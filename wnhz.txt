@@ -1,0 +1,117 @@
+mysql> select * from player;
++------+-------------+---------+------+--------+--------+---------+
+| id   | name        | jersyno | age  | salary | height | team_id |
++------+-------------+---------+------+--------+--------+---------+
+|    1 | Messi       |      10 |   33 |  10000 |      5 |       3 |
+|    2 | Suarez      |       9 |   30 |  10000 |      6 |       3 |
+|    3 | Grizeman    |      17 |   29 | 550000 |      6 |       3 |
+|    4 | Salah       |      11 |   29 | 650000 |      6 |       1 |
+|    5 | Mane        |      10 |   26 | 750000 |      5 |       1 |
+|    6 | Firmino     |       9 |   28 | 750000 |      6 |       1 |
+|    7 | Aubameyang  |      14 |   31 | 850000 |      6 |       2 |
+|    8 | Mesult Ozil |      10 |   31 | 950000 |      6 |       2 |
+|    9 | Martinelli  |      35 |   19 | 450000 |      6 |       2 |
++------+-------------+---------+------+--------+--------+---------+
+9 rows in set (0.06 sec)
+
+mysql> select * from team;
++----+-----------+-------------+
+| id | name      | foundeddate |
++----+-----------+-------------+
+|  1 | Liverpool | 1892-02-20  |
+|  2 | Arsenal   | 1890-03-20  |
+|  3 | Barcelona | 1905-11-29  |
++----+-----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> drop table menu;
+Query OK, 0 rows affected (2.25 sec)
+
+mysql> drop table food;
+Query OK, 0 rows affected (0.67 sec)
+
+mysql> select * from team where id=1;
++----+-----------+-------------+
+| id | name      | foundeddate |
++----+-----------+-------------+
+|  1 | Liverpool | 1892-02-20  |
++----+-----------+-------------+
+1 row in set (0.00 sec)
+
+mysql> select * from team where id=2;
++----+---------+-------------+
+| id | name    | foundeddate |
++----+---------+-------------+
+|  2 | Arsenal | 1890-03-20  |
++----+---------+-------------+
+1 row in set (0.00 sec)
+
+mysql> select * from player where salary>500000;
++------+-------------+---------+------+--------+--------+---------+
+| id   | name        | jersyno | age  | salary | height | team_id |
++------+-------------+---------+------+--------+--------+---------+
+|    3 | Grizeman    |      17 |   29 | 550000 |      6 |       3 |
+|    4 | Salah       |      11 |   29 | 650000 |      6 |       1 |
+|    5 | Mane        |      10 |   26 | 750000 |      5 |       1 |
+|    6 | Firmino     |       9 |   28 | 750000 |      6 |       1 |
+|    7 | Aubameyang  |      14 |   31 | 850000 |      6 |       2 |
+|    8 | Mesult Ozil |      10 |   31 | 950000 |      6 |       2 |
++------+-------------+---------+------+--------+--------+---------+
+6 rows in set (0.13 sec)
+
+mysql> select name,(select sum(salary) from player where player.team_id=team.id);
+ERROR 1054 (42S22): Unknown column 'name' in 'field list'
+mysql> select name,(select sum(salary) from player where player.team_id=team.id) as salary from team;
++-----------+---------+
+| name      | salary  |
++-----------+---------+
+| Liverpool | 2150000 |
+| Arsenal   | 2250000 |
+| Barcelona |  570000 |
++-----------+---------+
+3 rows in set (0.11 sec)
+
+mysql> select * from player where height>5;
++------+-------------+---------+------+--------+--------+---------+
+| id   | name        | jersyno | age  | salary | height | team_id |
++------+-------------+---------+------+--------+--------+---------+
+|    2 | Suarez      |       9 |   30 |  10000 |      6 |       3 |
+|    3 | Grizeman    |      17 |   29 | 550000 |      6 |       3 |
+|    4 | Salah       |      11 |   29 | 650000 |      6 |       1 |
+|    6 | Firmino     |       9 |   28 | 750000 |      6 |       1 |
+|    7 | Aubameyang  |      14 |   31 | 850000 |      6 |       2 |
+|    8 | Mesult Ozil |      10 |   31 | 950000 |      6 |       2 |
+|    9 | Martinelli  |      35 |   19 | 450000 |      6 |       2 |
++------+-------------+---------+------+--------+--------+---------+
+7 rows in set (0.00 sec)
+
+mysql> select name,(select avg(salary) from player where player.team_id=team.team.id)as average from team;
+ERROR 1054 (42S22): Unknown column 'team.team.id' in 'where clause'
+mysql> select name,(select avg(salary) from player where player.team_id=team.id)as average from team;
++-----------+-------------+
+| name      | average     |
++-----------+-------------+
+| Liverpool | 716666.6667 |
+| Arsenal   | 750000.0000 |
+| Barcelona | 190000.0000 |
++-----------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> select name salary from player where salary in(select min(salary)from player);
++--------+
+| salary |
++--------+
+| Messi  |
+| Suarez |
++--------+
+2 rows in set (0.16 sec)
+
+mysql> select player.* from player where age
+    -> <29 && salary>500000;
++------+---------+---------+------+--------+--------+---------+
+| id   | name    | jersyno | age  | salary | height | team_id |
++------+---------+---------+------+--------+--------+---------+
+|    5 | Mane    |      10 |   26 | 750000 |      5 |       1 |
+|    6 | Firmino |       9 |   28 | 750000 |      6 |       1 |
++------+---------+---------+------+--------+--------+---------+
+2 rows in set, 1 warning (0.03 sec)
